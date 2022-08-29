@@ -27,6 +27,28 @@ function loadData() {
     })
 }
 
+function check() {
+    let id = document.getElementById("select-room").value;
+    let content = ""
+    if (id == 1){
+        content += ' <option value="'+ "Tầng 4" +'">' + "Tầng 4" +
+            '</option>'
+        content += ' <option value="'+ "Tầng 5" +'">' + "Tầng 4" +
+            '</option>'
+        content += ' <option value="'+ "Tầng 6" +'">' + "Tầng 4" +
+            '</option>'
+        document.getElementById("selection").innerHTML = content
+    }else {
+        content += ' <option value="'+ "Tầng 1" +'">' + "Tầng 1" +
+            '</option>'
+        content += ' <option value="'+ "Tầng 2" +'">' + "Tầng 2" +
+            '</option>'
+        content += ' <option value="'+ "Tầng 3" +'">' + "Tầng 3" +
+            '</option>'
+        document.getElementById("selection").innerHTML = content
+    }
+}
+
 // Hàm tận dụng
 function loadTable(list) {
     let content = "";
@@ -44,6 +66,10 @@ function loadTable(list) {
     }
     document.getElementById("list-human").innerHTML = content;
 }
+
+
+// Delay time
+
 
 // Tạo mới đối tượng Human
 function createHuman() {
@@ -72,7 +98,14 @@ function createHuman() {
         url: "http://localhost:8088/people",
         //xử lý khi thành công
         success: function () {
-            loadData();
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Tạo mới thành công',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            setTimeout(loadData, 2000);
             $('#myModal').modal('hide');
         }
     });
@@ -141,9 +174,38 @@ function updateHuman() {
 
 }
 function deleteHuman(id) {
-    $.ajax({
-        type: "DELETE",
-        url: "http://localhost:8088/people/" + id,
-        success: loadData
+    Swal.fire({
+        title: 'Bạn có chắc muốn xóa ?',
+        text: "Bạn không thể khôi phục dữ liệu sau khi xóa  !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success',
+                $.ajax({
+                    type: "DELETE",
+                    url: "http://localhost:8088/people/" + id,
+                    success: function () {
+                        Swal.fire({
+                            position: 'top-end',
+                                icon: 'success',
+                            title: 'Xóa thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        loadData()
+                    }
+
+                })
+            )
+        }
     })
+
+
 }
